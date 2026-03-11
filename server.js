@@ -13,6 +13,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // 路由
 app.use('/api/jobs', require('./src/routes/jobs'));
+app.use('/api/subscriptions', require('./src/routes/subscriptions'));
 
 // 首页
 app.get('/', (req, res) => {

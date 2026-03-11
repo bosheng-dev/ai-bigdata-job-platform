@@ -54,10 +54,26 @@ class Scheduler {
     });
     this.tasks.push(statsTask);
 
+    // 任务4: 每天上午9点发送职位推荐
+    const subscriptionService = require('./subscription');
+    const notifyTask = cron.schedule('0 9 * * *', async () => {
+      console.log('📧 执行每日职位推荐:', new Date().toLocaleString('zh-CN'));
+      try {
+        await subscriptionService.sendDailyRecommendations();
+      } catch (error) {
+        console.error('❌ 每日推荐失败:', error.message);
+      }
+    }, {
+      scheduled: true,
+      timezone: 'Asia/Shanghai'
+    });
+    this.tasks.push(notifyTask);
+
     this.isRunning = true;
     console.log('✅ 调度器已启动，任务列表:');
     console.log('   - 每日 02:00 自动抓取职位数据');
     console.log('   - 每日 03:00 清理过期职位');
+    console.log('   - 每日 09:00 发送职位推荐');
     console.log('   - 每小时更新统计数据');
   }
 
@@ -228,6 +244,7 @@ class Scheduler {
       tasks: [
         { name: 'crawl', schedule: '0 2 * * *', description: '每日抓取' },
         { name: 'cleanup', schedule: '0 3 * * *', description: '每日清理' },
+        { name: 'notify', schedule: '0 9 * * *', description: '每日推荐' },
         { name: 'stats', schedule: '0 * * * *', description: '每小时统计' }
       ]
     };
