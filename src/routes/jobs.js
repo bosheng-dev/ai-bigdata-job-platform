@@ -127,4 +127,116 @@ router.get('/stats/categories', async (req, res) => {
   }
 });
 
+// 添加职位（管理后台）
+router.post('/', async (req, res) => {
+  try {
+    const {
+      title, company, location, salary, description,
+      requirements, job_type, category, source, source_url
+    } = req.body;
+
+    if (!title || !company || !location || !category) {
+      return res.status(400).json({ success: false, error: '缺少必填字段' });
+    }
+
+    const result = await db.run(
+      `INSERT INTO jobs (title, company, location, salary, description, requirements,
+       job_type, category, source, source_url, publish_date, is_verified, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        title, company, location, salary || '面议',
+        description || '', requirements || '',
+        job_type || '全职', category, source || '手动录入',
+        source_url || '', new Date().toISOString().split('T')[0],
+        1, // 手动录入默认已验证
+        'active'
+      ]
+    );
+
+    res.json({ success: true, data: { id: result.id }, message: '职位添加成功' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 更新职位（管理后台）
+router.put('/:id', async (req, res) => {
+  try {
+    const {
+      title, company, location, salary, description,
+      requirements, job_type, category, source, source_url
+    } = req.body;
+
+    const result = await db.run(
+      `UPDATE jobs SET
+        title = ?, company = ?, location = ?, salary = ?,
+        description = ?, requirements = ?, job_type = ?,
+        category = ?, source = ?, source_url = ?
+       WHERE id = ?`,
+      [
+        title, company, location, salary,
+        description, requirements, job_type,
+        category, source, source_url, req.params.id
+      ]
+    );
+
+    if (result.changes === 0) {
+      return res.status(404).json({ success: false, error: '职位不存在' });
+    }
+
+    res.json({ success: true, message: '职位更新成功' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 删除职位（管理后台）
+router.delete('/:id', async (req, res) => {
+  try {
+    const result = await db.run(
+      'UPDATE jobs SET status = ? WHERE id = ?',
+      ['deleted', req.params.id]
+    );
+
+    if (result.changes === 0) {
+      return res.status(404).json({ success: false, error: '职位不存在' });
+    }
+
+    res.json({ success: true, message: '职位已删除' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 审核职位（管理后台）
+router.post('/:id/verify', async (req, res) => {
+  try {
+    const result = await db.run(
+      'UPDATE jobs SET is_verified = ? WHERE id = ?',
+      [1, req.params.id]
+    );
+
+    if (result.changes === 0) {
+      return res.status(404).json({ success: false, error: '职位不存在' });
+    }
+
+    res.json({ success: true, message: '职位审核通过' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 获取所有职位（管理后台，不分页）
+router.get('/admin/all', async (req, res) => {
+  try {
+    const jobs = await db.query(
+      'SELECT * FROM jobs WHERE status = ? ORDER BY crawl_date DESC',
+      ['active']
+    );
+    res.json({ success: true, data: jobs });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 module.exports = router;
