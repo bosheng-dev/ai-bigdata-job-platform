@@ -1,336 +1,739 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI大数据就业资讯平台</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      color: #333;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    header {
-      text-align: center;
-      padding: 40px 0;
-      color: white;
-    }
-    header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-    }
-    header p {
-      font-size: 1.1rem;
-      opacity: 0.9;
-    }
-    .search-box {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    }
-    .search-box input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      font-size: 16px;
-      transition: border-color 0.3s;
-    }
-    .search-box input:focus {
-      outline: none;
-      border-color: #667eea;
-    }
-    .filters {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-      flex-wrap: wrap;
-    }
-    .filter-btn {
-      padding: 8px 16px;
-      border: 2px solid #e0e0e0;
-      border-radius: 20px;
-      background: white;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 14px;
-    }
-    .filter-btn:hover, .filter-btn.active {
-      background: #667eea;
-      color: white;
-      border-color: #667eea;
-    }
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-    .stat-card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    }
-    .stat-card h3 {
-      font-size: 2rem;
-      color: #667eea;
-      margin-bottom: 5px;
-    }
-    .stat-card p {
-      color: #666;
-      font-size: 14px;
-    }
-    .job-list {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    }
-    .job-item {
-      border-bottom: 1px solid #f0f0f0;
-      padding: 20px 0;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .job-item:last-child {
-      border-bottom: none;
-    }
-    .job-item:hover {
-      background: #f8f9ff;
-    }
-    .job-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 10px;
-    }
-    .job-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #333;
-    }
-    .job-salary {
-      color: #f56c6c;
-      font-weight: 600;
-      font-size: 1.1rem;
-    }
-    .job-meta {
-      display: flex;
-      gap: 15px;
-      color: #666;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-    .job-meta span {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .job-tags {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-    .tag {
-      padding: 4px 10px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-    .tag-category {
-      background: #e3f2fd;
-      color: #1976d2;
-    }
-    .tag-source {
-      background: #f3e5f5;
-      color: #7b1fa2;
-    }
-    .tag-date {
-      background: #e8f5e9;
-      color: #388e3c;
-    }
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: #666;
-    }
-    .empty {
-      text-align: center;
-      padding: 60px;
-      color: #999;
-    }
-    .footer {
-      text-align: center;
-      padding: 40px;
-      color: white;
-      opacity: 0.8;
-    }
-    @media (max-width: 768px) {
-      header h1 { font-size: 1.8rem; }
-      .job-header { flex-direction: column; }
-      .job-salary { margin-top: 10px; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高职AI与大数据就业平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .header .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+        }
+        
+        .header .stat-item {
+            text-align: center;
+        }
+        
+        .header .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .header .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .filter-group label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        
+        .filter-group select,
+        .filter-group input {
+            padding: 10px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        
+        .filter-group select:focus,
+        .filter-group input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #666;
+        }
+        
+        .btn-secondary:hover {
+            background: #e8e8e8;
+        }
+        
+        /* Job Cards */
+        .jobs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .job-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .job-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .job-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+        
+        .job-company {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .job-salary {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f56c6c;
+        }
+        
+        .job-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .job-tag {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .tag-category-ai { background: #e6f7ff; color: #1890ff; }
+        .tag-category-data { background: #f6ffed; color: #52c41a; }
+        .tag-category-analyst { background: #f9f0ff; color: #722ed1; }
+        .tag-category-python { background: #fff7e6; color: #fa8c16; }
+        .tag-type { background: #f0f0f0; color: #666; }
+        .tag-location { background: #f5f5f5; color: #999; }
+        
+        .job-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .job-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .job-source {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .job-date {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        /* Subscribe Section */
+        .subscribe-section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-top: 40px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .subscribe-section h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .subscribe-section p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+        
+        .subscribe-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .subscribe-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .subscribe-input-group input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .subscribe-filters {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .subscribe-filters select {
+            padding: 10px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 30px;
+        }
+        
+        .pagination button {
+            padding: 8px 16px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .pagination button:hover:not(:disabled) {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination button.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        /* Loading & Empty States */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: white;
+        }
+        
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        /* Admin Link */
+        .admin-link {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #667eea;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .admin-link:hover {
+            background: white;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 28px;
+            }
+            
+            .header .stats {
+                gap: 20px;
+            }
+            
+            .jobs-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .subscribe-input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>🎯 AI大数据就业资讯平台</h1>
-      <p>高职人工智能与大数据专业学生专属就业信息聚合</p>
-    </header>
-
-    <div class="search-box">
-      <input type="text" id="searchInput" placeholder="搜索职位、公司或关键词..." />
-      <div class="filters">
-        <button class="filter-btn active" data-category="">全部</button>
-        <button class="filter-btn" data-category="ai_engineer">AI工程师</button>
-        <button class="filter-btn" data-category="data_engineer">大数据工程师</button>
-        <button class="filter-btn" data-category="data_analyst">数据分析师</button>
-        <button class="filter-btn" data-category="python_dev">Python开发</button>
-      </div>
-    </div>
-
-    <div class="stats" id="stats">
-      <div class="stat-card">
-        <h3 id="totalJobs">-</h3>
-        <p>在招职位</p>
-      </div>
-      <div class="stat-card">
-        <h3 id="aiJobs">-</h3>
-        <p>AI相关</p>
-      </div>
-      <div class="stat-card">
-        <h3 id="dataJobs">-</h3>
-        <p>大数据相关</p>
-      </div>
-    </div>
-
-    <div class="job-list" id="jobList">
-      <div class="loading">加载中...</div>
-    </div>
-
-    <div class="footer">
-      <p>🦞 龙虾1号开发 · 信息来源真实可靠 · 仅展示30天内发布职位</p>
-    </div>
-  </div>
-
-  <script>
-    const categoryNames = {
-      'ai_engineer': 'AI工程师',
-      'data_engineer': '大数据工程师',
-      'data_analyst': '数据分析师',
-      'python_dev': 'Python开发',
-      'other': '其他'
-    };
-
-    let currentCategory = '';
-    let searchKeyword = '';
-
-    async function fetchJobs() {
-      try {
-        const params = new URLSearchParams();
-        if (currentCategory) params.append('category', currentCategory);
-        if (searchKeyword) params.append('keyword', searchKeyword);
-        
-        const response = await fetch(`/api/jobs?${params}`);
-        const result = await response.json();
-        
-        if (result.success) {
-          renderJobs(result.data);
-          updateStats(result.pagination.total);
-        }
-      } catch (error) {
-        document.getElementById('jobList').innerHTML = 
-          '<div class="empty">加载失败，请刷新重试</div>';
-      }
-    }
-
-    function renderJobs(jobs) {
-      const container = document.getElementById('jobList');
-      
-      if (jobs.length === 0) {
-        container.innerHTML = '<div class="empty">暂无符合条件的职位</div>';
-        return;
-      }
-
-      container.innerHTML = jobs.map(job => `
-        <div class="job-item" onclick="showDetail(${job.id})">
-          <div class="job-header">
-            <div class="job-title">${escapeHtml(job.title)}</div>
-            <div class="job-salary">${escapeHtml(job.salary || '薪资面议')}</div>
-          </div>
-          <div class="job-meta">
-            <span>🏢 ${escapeHtml(job.company)}</span>
-            <span>📍 ${escapeHtml(job.location || '地点不限')}</span>
-            <span>📅 ${formatDate(job.publish_date)}</span>
-          </div>
-          <div class="job-tags">
-            <span class="tag tag-category">${categoryNames[job.category] || job.category}</span>
-            <span class="tag tag-source">${escapeHtml(job.source)}</span>
-            <span class="tag tag-date">${getDaysAgo(job.publish_date)}天前发布</span>
-          </div>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎓 高职AI与大数据就业平台</h1>
+            <p>专为高职学生打造的人工智能与大数据专业就业资讯服务</p>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="statTotal">0</div>
+                    <div class="stat-label">在招职位</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="statCompanies">0</div>
+                    <div class="stat-label">合作企业</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="statCities">0</div>
+                    <div class="stat-label">覆盖城市</div>
+                </div>
+            </div>
         </div>
-      `).join('');
-    }
-
-    function updateStats(total) {
-      document.getElementById('totalJobs').textContent = total;
-      // 简化统计，实际应该从API获取分类统计
-      document.getElementById('aiJobs').textContent = Math.floor(total * 0.4);
-      document.getElementById('dataJobs').textContent = Math.floor(total * 0.35);
-    }
-
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    function formatDate(dateStr) {
-      if (!dateStr) return '未知';
-      const date = new Date(dateStr);
-      return `${date.getMonth() + 1}月${date.getDate()}日`;
-    }
-
-    function getDaysAgo(dateStr) {
-      if (!dateStr) return '-';
-      const date = new Date(dateStr);
-      const now = new Date();
-      return Math.floor((now - date) / (1000 * 60 * 60 * 24));
-    }
-
-    function showDetail(id) {
-      window.open(`/api/jobs/${id}`, '_blank');
-    }
-
-    // 事件监听
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentCategory = btn.dataset.category;
-        fetchJobs();
-      });
-    });
-
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      searchKeyword = e.target.value;
-      fetchJobs();
-    });
-
-    // 初始化
-    fetchJobs();
-  </script>
+        
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label>职位分类</label>
+                    <select id="filterCategory">
+                        <option value="">全部分类</option>
+                        <option value="ai_engineer">AI工程师</option>
+                        <option value="data_engineer">数据工程师</option>
+                        <option value="data_analyst">数据分析师</option>
+                        <option value="python_dev">Python开发</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>工作地点</label>
+                    <select id="filterLocation">
+                        <option value="">全部城市</option>
+                        <option value="北京">北京</option>
+                        <option value="上海">上海</option>
+                        <option value="广州">广州</option>
+                        <option value="深圳">深圳</option>
+                        <option value="杭州">杭州</option>
+                        <option value="成都">成都</option>
+                        <option value="武汉">武汉</option>
+                        <option value="苏州">苏州</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>工作类型</label>
+                    <select id="filterType">
+                        <option value="">全部类型</option>
+                        <option value="全职">全职</option>
+                        <option value="实习">实习</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>关键词搜索</label>
+                    <input type="text" id="filterKeyword" placeholder="输入职位或公司名称">
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button class="btn btn-secondary" onclick="resetFilters()">重置</button>
+                <button class="btn btn-primary" onclick="applyFilters()">筛选</button>
+            </div>
+        </div>
+        
+        <!-- Jobs Grid -->
+        <div class="jobs-grid" id="jobsGrid">
+            <!-- 动态填充 -->
+        </div>
+        
+        <!-- Pagination -->
+        <div class="pagination" id="pagination">
+            <!-- 动态填充 -->
+        </div>
+        
+        <!-- Subscribe Section -->
+        <div class="subscribe-section">
+            <h2>📧 订阅职位推荐</h2>
+            <p>每天上午9点，为您推送符合偏好的最新职位</p>
+            <div class="subscribe-form">
+                <div class="subscribe-input-group">
+                    <input type="email" id="subscribeEmail" placeholder="输入您的邮箱">
+                    <button class="btn btn-primary" onclick="subscribe()">立即订阅</button>
+                </div>
+                <div class="subscribe-filters">
+                    <select id="subCategory">
+                        <option value="">关注分类（可选）</option>
+                        <option value="ai_engineer">AI工程师</option>
+                        <option value="data_engineer">数据工程师</option>
+                        <option value="data_analyst">数据分析师</option>
+                        <option value="python_dev">Python开发</option>
+                    </select>
+                    <select id="subLocation">
+                        <option value">期望城市（可选）</option>
+                        <option value="北京">北京</option>
+                        <option value="上海">上海</option>
+                        <option value="广州">广州</option>
+                        <option value="深圳">深圳</option>
+                        <option value="杭州">杭州</option>
+                    </select>
+                    <select id="subType">
+                        <option value="">工作类型（可选）</option>
+                        <option value="全职">全职</option>
+                        <option value="实习">实习</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+    
+    <!-- Admin Link -->
+    <a href="/admin" class="admin-link">管理后台</a>
+    
+    <script>
+        // 分类映射
+        const categoryMap = {
+            ai_engineer: { name: 'AI工程师', class: 'tag-category-ai' },
+            data_engineer: { name: '数据工程师', class: 'tag-category-data' },
+            data_analyst: { name: '数据分析师', class: 'tag-category-analyst' },
+            python_dev: { name: 'Python开发', class: 'tag-category-python' }
+        };
+        
+        // 状态
+        let jobs = [];
+        let currentPage = 1;
+        let totalPages = 1;
+        let filters = {};
+        
+        // 初始化
+        async function init() {
+            await loadStats();
+            await loadJobs();
+        }
+        
+        // 加载统计数据
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/jobs/stats/categories');
+                const result = await response.json();
+                
+                if (result.success) {
+                    const total = result.data.reduce((sum, item) => sum + item.count, 0);
+                    document.getElementById('statTotal').textContent = total;
+                    document.getElementById('statCompanies').textContent = '20+';
+                    document.getElementById('statCities').textContent = '10+';
+                }
+            } catch (error) {
+                console.error('加载统计失败:', error);
+            }
+        }
+        
+        // 加载职位列表
+        async function loadJobs(page = 1) {
+            try {
+                const params = new URLSearchParams({ page, limit: 12 });
+                
+                if (filters.category) params.append('category', filters.category);
+                if (filters.location) params.append('location', filters.location);
+                if (filters.jobType) params.append('keyword', filters.jobType);
+                if (filters.keyword) params.append('keyword', filters.keyword);
+                
+                const response = await fetch(`/api/jobs?${params}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    jobs = result.data;
+                    currentPage = result.pagination.page;
+                    totalPages = result.pagination.pages;
+                    renderJobs();
+                    renderPagination();
+                }
+            } catch (error) {
+                console.error('加载职位失败:', error);
+                showToast('加载失败，请刷新重试');
+            }
+        }
+        
+        // 渲染职位卡片
+        function renderJobs() {
+            const grid = document.getElementById('jobsGrid');
+            
+            if (jobs.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-state-icon">🔍</div>
+                        <p>暂无符合条件的职位</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = jobs.map(job => `
+                <div class="job-card" onclick="viewJob(${job.id})">
+                    <div class="job-header">
+                        <div>
+                            <div class="job-title">${job.title}</div>
+                            <div class="job-company">${job.company}</div>
+                        </div>
+                        <div class="job-salary">${job.salary || '面议'}</div>
+                    </div>
+                    <div class="job-tags">
+                        <span class="job-tag ${categoryMap[job.category]?.class || 'tag-type'}">${categoryMap[job.category]?.name || job.category}</span>
+                        <span class="job-tag tag-type">${job.job_type}</span>
+                        <span class="job-tag tag-location">${job.location}</span>
+                    </div>
+                    <div class="job-description">${job.description || '暂无描述'}</div>
+                    <div class="job-footer">
+                        <span class="job-source">来源: ${job.source}</span>
+                        <span class="job-date">${formatDate(job.publish_date)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // 渲染分页
+        function renderPagination() {
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+            
+            let html = `
+                <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>上一页</button>
+            `;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<button class="${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            }
+            
+            html += `
+                <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>下一页</button>
+            `;
+            
+            pagination.innerHTML = html;
+        }
+        
+        // 切换页面
+        function changePage(page) {
+            if (page < 1 || page > totalPages) return;
+            loadJobs(page);
+        }
+        
+        // 应用筛选
+        function applyFilters() {
+            filters = {
+                category: document.getElementById('filterCategory').value,
+                location: document.getElementById('filterLocation').value,
+                jobType: document.getElementById('filterType').value,
+                keyword: document.getElementById('filterKeyword').value
+            };
+            loadJobs(1);
+        }
+        
+        // 重置筛选
+        function resetFilters() {
+            document.getElementById('filterCategory').value = '';
+            document.getElementById('filterLocation').value = '';
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterKeyword').value = '';
+            filters = {};
+            loadJobs(1);
+        }
+        
+        // 查看职位详情
+        function viewJob(id) {
+            window.open(`/api/jobs/${id}`, '_blank');
+        }
+        
+        // 订阅
+        async function subscribe() {
+            const email = document.getElementById('subscribeEmail').value;
+            const category = document.getElementById('subCategory').value;
+            const location = document.getElementById('subLocation').value;
+            const jobType = document.getElementById('subType').value;
+            
+            if (!email) {
+                showToast('请输入邮箱地址');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/subscriptions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email,
+                        categories: category ? [category] : [],
+                        locations: location ? [location] : [],
+                        jobTypes: jobType ? [jobType] : [],
+                        notifyType: 'email'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('订阅成功！每天9点为您推送职位');
+                    document.getElementById('subscribeEmail').value = '';
+                } else {
+                    showToast(result.error || '订阅失败');
+                }
+            } catch (error) {
+                showToast('订阅失败，请重试');
+            }
+        }
+        
+        // 显示提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // 格式化日期
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return `${date.getMonth() + 1}月${date.getDate()}日`;
+        }
+        
+        // 启动
+        init();
+    </script>
 </body>
 </html>
