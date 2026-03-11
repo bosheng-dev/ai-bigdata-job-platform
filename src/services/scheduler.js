@@ -1,5 +1,7 @@
 const cron = require('node-cron');
 const crawler = require('./crawler');
+const realCrawler = require('./crawler-real');
+const puppeteerCrawler = require('./crawler-puppeteer');
 const db = require('../models/database');
 
 /**
@@ -70,23 +72,79 @@ class Scheduler {
   }
 
   /**
-   * 执行抓取任务
+   * 执行抓取任务（三层降级：Puppeteer → HTTP爬虫 → 模拟数据）
    */
   async runCrawlJob() {
     const startTime = Date.now();
+    
+    // 第一层：Puppeteer爬虫（处理动态页面）
+    try {
+      console.log('🌐 尝试 Puppeteer 爬取...');
+      const jobs = await puppeteerCrawler.crawl();
+      
+      if (jobs.length > 0) {
+        const { saved, duplicates } = await puppeteerCrawler.saveJobs(jobs);
+        const duration = Date.now() - startTime;
+        
+        await this.logCrawlResult({
+          status: 'success',
+          source: 'puppeteer',
+          crawled: jobs.length,
+          saved: saved.length,
+          duplicates: duplicates.length,
+          duration: duration,
+          timestamp: new Date().toISOString()
+        });
+
+        console.log(`✅ Puppeteer 完成: ${jobs.length} 条，保存 ${saved.length} 条`);
+        return saved;
+      }
+      console.log('⚠️ Puppeteer 未获取数据，尝试 HTTP 爬虫...');
+    } catch (error) {
+      console.error('❌ Puppeteer 失败:', error.message);
+    }
+    
+    // 第二层：HTTP爬虫
+    try {
+      console.log('🌐 尝试 HTTP 爬虫...');
+      const jobs = await realCrawler.crawl();
+      
+      if (jobs.length > 0) {
+        const { saved, duplicates } = await realCrawler.saveJobs(jobs);
+        const duration = Date.now() - startTime;
+        
+        await this.logCrawlResult({
+          status: 'success',
+          source: 'http',
+          crawled: jobs.length,
+          saved: saved.length,
+          duplicates: duplicates.length,
+          duration: duration,
+          timestamp: new Date().toISOString()
+        });
+
+        console.log(`✅ HTTP 爬虫完成: ${jobs.length} 条，保存 ${saved.length} 条`);
+        return saved;
+      }
+      console.log('⚠️ HTTP 爬虫未获取数据，回退到模拟数据...');
+    } catch (error) {
+      console.error('❌ HTTP 爬虫失败:', error.message);
+    }
+    
+    // 第三层：模拟数据
     try {
       const jobs = await crawler.crawl();
       const duration = Date.now() - startTime;
       
-      // 记录抓取日志
       await this.logCrawlResult({
-        status: 'success',
+        status: 'fallback',
+        source: 'mock',
         newJobs: jobs.length,
         duration: duration,
         timestamp: new Date().toISOString()
       });
 
-      console.log(`✅ 抓取完成: ${jobs.length} 条新职位，耗时 ${duration}ms`);
+      console.log(`⚠️ 回退到模拟数据: ${jobs.length} 条`);
       return jobs;
     } catch (error) {
       await this.logCrawlResult({
@@ -94,7 +152,7 @@ class Scheduler {
         error: error.message,
         timestamp: new Date().toISOString()
       });
-      console.error('❌ 抓取失败:', error.message);
+      console.error('❌ 所有爬虫失败:', error.message);
       throw error;
     }
   }
