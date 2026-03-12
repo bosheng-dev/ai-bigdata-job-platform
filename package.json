@@ -24,13 +24,14 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "node-cron": "^3.0.3",
+    "nodemailer": "^8.0.2",
     "puppeteer": "^24.39.0",
     "sqlite3": "^5.1.6"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
+    "nodemon": "^3.0.2",
     "semantic-release": "^25.0.3"
   },
   "repository": {

@@ -4,6 +4,7 @@
  */
 
 const db = require('../models/database');
+const emailService = require('./email');
 
 class SubscriptionService {
   constructor() {
@@ -126,10 +127,30 @@ class SubscriptionService {
       [subscription.id, 'email', JSON.stringify({ jobCount: jobs.length }), 'pending']
     );
     
-    // TODO: 集成邮件发送服务（如 nodemailer）
-    console.log(`📧 邮件推荐已生成: ${subscription.email}, 职位数: ${jobs.length}`);
+    // 发送邮件
+    const result = await emailService.sendJobRecommendation(
+      subscription.email,
+      jobs,
+      {
+        categories: JSON.parse(subscription.categories || '[]'),
+        locations: JSON.parse(subscription.locations || '[]'),
+        jobTypes: JSON.parse(subscription.job_types || '[]')
+      }
+    );
     
-    return { message: '邮件推荐已生成' };
+    // 更新发送状态
+    await db.run(
+      'UPDATE notification_logs SET status = ? WHERE subscription_id = ? AND type = ? ORDER BY id DESC LIMIT 1',
+      [result.success ? 'sent' : 'failed', subscription.id, 'email']
+    );
+    
+    if (result.success) {
+      console.log(`✅ 邮件已发送: ${subscription.email}, 职位数: ${jobs.length}`);
+    } else {
+      console.log(`⚠️ 邮件发送失败: ${subscription.email}, 错误: ${result.error}`);
+    }
+    
+    return result;
   }
 
   /**
@@ -138,10 +159,16 @@ class SubscriptionService {
   async sendWechatNotification(subscription, jobs) {
     if (!subscription.phone) return;
     
-    // TODO: 集成微信模板消息API
-    console.log(`📱 微信通知已生成: ${subscription.phone}, 职位数: ${jobs.length}`);
+    // 微信服务暂未集成，记录日志
+    console.log(`⚠️ 微信服务未配置，跳过发送: ${subscription.phone}`);
     
-    return { message: '微信通知已生成' };
+    // 更新发送状态
+    await db.run(
+      'UPDATE notification_logs SET status = ? WHERE subscription_id = ? AND type = ? ORDER BY id DESC LIMIT 1',
+      ['skipped', subscription.id, 'wechat']
+    );
+    
+    return { success: false, message: '微信服务未配置' };
   }
 
   /**
