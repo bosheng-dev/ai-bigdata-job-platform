@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: job-platform-crawl
+  namespace: job-platform
+spec:
+  schedule: "0 2 * * *"
+  timeZone: "Asia/Shanghai"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: crawler
+            image: job-platform:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - node
+            - src/crawler/crawler.js
+            envFrom:
+            - configMapRef:
+                name: job-platform-config
+            volumeMounts:
+            - name: data
+              mountPath: /app/data
+          volumes:
+          - name: data
+            persistentVolumeClaim:
+              claimName: job-platform-data
+          restartPolicy: OnFailure

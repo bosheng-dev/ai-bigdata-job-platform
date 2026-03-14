@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: job-platform-email
+  namespace: job-platform
+spec:
+  schedule: "0 9 * * *"
+  timeZone: "Asia/Shanghai"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: email-sender
+            image: job-platform:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - node
+            - src/services/subscription.js
+            - send-daily
+            envFrom:
+            - configMapRef:
+                name: job-platform-config
+            env:
+            - name: EMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: job-platform-secret
+                  key: EMAIL_PASSWORD
+            volumeMounts:
+            - name: data
+              mountPath: /app/data
+          volumes:
+          - name: data
+            persistentVolumeClaim:
+              claimName: job-platform-data
+          restartPolicy: OnFailure
